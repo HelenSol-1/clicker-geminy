@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rocket Landing Simulator</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #000;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+        
+        #game-container {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(to bottom, #000 0%, #000039 50%, #000 100%);
+            overflow: hidden;
+        }
+        
+        #rocket {
+            position: absolute;
+            width: 40px;
+            height: 100px;
+            transform-origin: center bottom;
+        }
+        
+        #platform {
+            position: absolute;
+            width: 150px;
+            height: 20px;
+            bottom: 50px;
+            left: calc(50% - 75px);
+            background-color: #555;
+            border-radius: 5px;
+        }
+        
+        #flames {
+            position: absolute;
+            bottom: -30px;
+            left: 12px;
+            width: 16px;
+            height: 30px;
+            display: none;
+            opacity: 0.7;
+        }
+        
+        #lateral-flames-left {
+            position: absolute;
+            top: 50px;
+            left: -20px;
+            width: 20px;
+            height: 15px;
+            display: none;
+            opacity: 0.7;
+        }
+        
+        #lateral-flames-right {
+            position: absolute;
+            top: 50px;
+            right: -20px;
+            width: 20px;
+            height: 15px;
+            display: none;
+            opacity: 0.7;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+        }
+        
+        #hud {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        
+        #message {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            display: none;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        #instructions {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div id="rocket">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 100" width="40" height="100">
+                <!-- Rocket body -->
+                <path d="M5 70 L5 40 C5 20 20 5 20 5 C20 5 35 20 35 40 L35 70 Z" fill="#d1d1d1" stroke="#333" stroke-width="1" />
+                <!-- Windows -->
+                <circle cx="20" cy="30" r="5" fill="#87CEEB" stroke="#333" stroke-width="0.5" />
+                <!-- Bottom section -->
+                <path d="M5 70 L5 85 L10 85 L10 95 L30 95 L30 85 L35 85 L35 70 Z" fill="#c0c0c0" stroke="#333" stroke-width="1" />
+                <!-- Red accents -->
+                <path d="M10 40 L10 70 L5 70 L5 75 L35 75 L35 70 L30 70 L30 40 Z" fill="#a30000" fill-opacity="0.3" />
+                <!-- Logo -->
+                <text x="15" y="60" font-family="Arial" font-size="7" fill="black">X</text>
+            </svg>
+            
+            <!-- Main engine flames -->
+            <div id="flames">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 30" width="16" height="30">
+                    <path d="M0 0 L8 30 L16 0 Z" fill="url(#flameGradient)" />
+                    <defs>
+                        <linearGradient id="flameGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" stop-color="#FF5500" />
+                            <stop offset="50%" stop-color="#FF9900" />
+                            <stop offset="100%" stop-color="#FFFF00" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            
+            <!-- Lateral flames -->
+            <div id="lateral-flames-left">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 15" width="20" height="15">
+                    <path d="M20 7.5 L0 0 L0 15 Z" fill="url(#lateralFlameGradient)" />
+                    <defs>
+                        <linearGradient id="lateralFlameGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#FFFF00" />
+                            <stop offset="50%" stop-color="#FF9900" />
+                            <stop offset="100%" stop-color="#FF5500" />
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            
+            <div id="lateral-flames-right">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 15" width="20" height="15">
+                    <path d="M0 7.5 L20 0 L20 15 Z" fill="url(#lateralFlameGradient)" />
+                </svg>
+            </div>
+        </div>
+        
+        <div id="platform"></div>
+        
+        <div id="hud">
+            <div>Высота: <span id="altitude">1000</span> м</div>
+            <div>Скорость: <span id="velocity">0</span> м/с</div>
+            <div>Угол: <span id="angle">0</span>°</div>
+            <div>Топливо: <span id="fuel">100</span>%</div>
+        </div>
+        
+        <div id="instructions">
+            <div>↑ - Ускорение</div>
+            <div>← → - Вращение</div>
+            <div>R - Перезапуск</div>
+        </div>
+        
+        <div id="message">
+            <h2 id="message-title"></h2>
+            <p id="message-text"></p>
+            <button id="restart-button">Начать заново</button>
+        </div>
+    </div>
+
+    <script>
+        // Game constants
+        const GRAVITY = 0.05;
+        const THRUST = 0.09;
+        const ROTATION_SPEED = 2;
+        const FUEL_CONSUMPTION_RATE = 0.2;
+        const LATERAL_THRUST = 0.04;
+        
+        // Game state
+        let gameRunning = true;
+        let rocketX = window.innerWidth / 2 - 20;
+        let rocketY = 100;
+        let velocityX = 0;
+        let velocityY = 0;
+        let rotation = 0;
+        let fuel = 100;
+        let thrustApplied = false;
+        let leftThrustApplied = false;
+        let rightThrustApplied = false;
+        let keys = {};
+        
+        // DOM elements
+        const rocket = document.getElementById('rocket');
+        const flames = document.getElementById('flames');
+        const lateralFlamesLeft = document.getElementById('lateral-flames-left');
+        const lateralFlamesRight = document.getElementById('lateral-flames-right');
+        const platform = document.getElementById('platform');
+        const altitudeDisplay = document.getElementById('altitude');
+        const velocityDisplay = document.getElementById('velocity');
+        const angleDisplay = document.getElementById('angle');
+        const fuelDisplay = document.getElementById('fuel');
+        const message = document.getElementById('message');
+        const messageTitle = document.getElementById('message-title');
+        const messageText = document.getElementById('message-text');
+        const restartButton = document.getElementById('restart-button');
+        
+        // Initialize the game
+        function init() {
+            // Create stars
+            createStars();
+            
+            // Set initial rocket position
+            updateRocketPosition();
+            
+            // Start game loop
+            requestAnimationFrame(gameLoop);
+            
+            // Event listeners
+            window.addEventListener('keydown', e => { keys[e.key] = true; });
+            window.addEventListener('keyup', e => { keys[e.key] = false; });
+            restartButton.addEventListener('click', restartGame);
+        }
+        
+        // Create star background
+        function createStars() {
+            const gameContainer = document.getElementById('game-container');
+            const numStars = 200;
+            
+            for (let i = 0; i < numStars; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Random size
+                const size = Math.random() * 2;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                
+                // Random position
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                
+                // Random opacity
+                star.style.opacity = Math.random() * 0.8 + 0.2;
+                
+                gameContainer.appendChild(star);
+            }
+        }
+        
+        // Main game loop
+        function gameLoop() {
+            if (!gameRunning) return;
+            
+            handleInput();
+            updatePhysics();
+            checkCollisions();
+            updateDisplay();
+            
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Handle keyboard input
+        function handleInput() {
+            thrustApplied = false;
+            leftThrustApplied = false;
+            rightThrustApplied = false;
+            
+            if (keys['ArrowUp'] && fuel > 0) {
+                applyThrust();
+                thrustApplied = true;
+            }
+            
+            if (keys['ArrowLeft'] && fuel > 0) {
+                rotation -= ROTATION_SPEED;
+                applyLateralThrust('right');
+                rightThrustApplied = true;
+            }
+            
+            if (keys['ArrowRight'] && fuel > 0) {
+                rotation += ROTATION_SPEED;
+                applyLateralThrust('left');
+                leftThrustApplied = true;
+            }
+            
+            if (keys['r'] || keys['R']) {
+                restartGame();
+            }
+            
+            // Update flames visibility
+            flames.style.display = thrustApplied ? 'block' : 'none';
+            lateralFlamesLeft.style.display = leftThrustApplied ? 'block' : 'none';
+            lateralFlamesRight.style.display = rightThrustApplied ? 'block' : 'none';
+        }
+        
+        // Apply main engine thrust
+        function applyThrust() {
+            const radians = rotation * Math.PI / 180;
+            velocityX -= Math.sin(radians) * THRUST;
+            velocityY -= Math.cos(radians) * THRUST;
+            consumeFuel();
+        }
+        
+        // Apply lateral thrust
+        function applyLateralThrust(direction) {
+            consumeFuel(0.5);  // Lateral thrusters use less fuel
+        }
+        
+        // Consume fuel
+        function consumeFuel(multiplier = 1) {
+            fuel -= FUEL_CONSUMPTION_RATE * multiplier;
+            if (fuel < 0) fuel = 0;
+        }
+        
+        // Update physics
+        function updatePhysics() {
+            // Apply gravity
+            velocityY += GRAVITY;
+            
+            // Update position based on velocity
+            rocketX += velocityX;
+            rocketY += velocityY;
+            
+            // Boundary check - keep rocket on screen
+            if (rocketX < 0) {
+                rocketX = 0;
+                velocityX *= -0.5;  // Bounce with energy loss
+            }
+            
+            if (rocketX > window.innerWidth - 40) {
+                rocketX = window.innerWidth - 40;
+                velocityX *= -0.5;  // Bounce with energy loss
+            }
+            
+            updateRocketPosition();
+        }
+        
+        // Update rocket position and rotation
+        function updateRocketPosition() {
+            rocket.style.left = rocketX + 'px';
+            rocket.style.top = rocketY + 'px';
+            rocket.style.transform = `rotate(${rotation}deg)`;
+        }
+        
+        // Check for collisions with platform
+        function checkCollisions() {
+            const platformRect = platform.getBoundingClientRect();
+            const rocketRect = rocket.getBoundingClientRect();
+            
+            // Check if rocket is touching platform
+            if (rocketRect.bottom >= platformRect.top && 
+                rocketRect.bottom <= platformRect.bottom &&
+                rocketRect.right >= platformRect.left && 
+                rocketRect.left <= platformRect.right) {
+                
+                // Check landing conditions
+                const speed = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+                const isStraight = Math.abs(rotation) < 15;
+                
+                if (speed < 2 && isStraight) {
+                    showMessage('Успешная посадка!', 'Отличная работа! Вы успешно посадили ракету.');
+                } else {
+                    showMessage('Крушение!', `Ракета разбилась! Скорость: ${speed.toFixed(1)} м/с, Угол: ${Math.abs(rotation).toFixed(1)}°`);
+                }
+                
+                gameRunning = false;
+            }
+            
+            // Check if rocket crashed into the ground
+            if (rocketRect.bottom >= window.innerHeight) {
+                showMessage('Крушение!', 'Ракета разбилась о землю!');
+                gameRunning = false;
+            }
+        }
+        
+        // Update HUD display
+        function updateDisplay() {
+            const altitude = Math.max(0, window.innerHeight - rocket.getBoundingClientRect().bottom - 50);
+            const speed = Math.sqrt(velocityX * velocityX + velocityY * velocityY);
+            
+            altitudeDisplay.textContent = Math.round(altitude);
+            velocityDisplay.textContent = speed.toFixed(1);
+            angleDisplay.textContent = rotation.toFixed(1);
+            fuelDisplay.textContent = Math.round(fuel);
+        }
+        
+        // Show message
+        function showMessage(title, text) {
+            messageTitle.textContent = title;
+            messageText.textContent = text;
+            message.style.display = 'block';
+        }
+        
+        // Restart game
+        function restartGame() {
+            rocketX = window.innerWidth / 2 - 20;
+            rocketY = 100;
+            velocityX = 0;
+            velocityY = 0;
+            rotation = 0;
+            fuel = 100;
+            
+            updateRocketPosition();
+            message.style.display = 'none';
+            gameRunning = true;
+            
+            if (!requestAnimationFrame.isRunning) {
+                requestAnimationFrame(gameLoop);
+            }
+        }
+        
+        // Initialize the game
+        window.onload = init;
+    </script>
+</body>
+</html>
