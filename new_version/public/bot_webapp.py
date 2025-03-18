@@ -1,23 +1,29 @@
 import os
+import logging
+from aiogram import Bot, Dispatcher, types
+from aiogram.types import WebAppInfo
+from aiogram.utils import executor
 from dotenv import load_dotenv
-from telegram import Update, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
-from telegram.ext import Application, CommandHandler, CallbackContext
 
-# 🔹 Загружаем переменные из .env
+# Загружаем переменные из .env
 load_dotenv()
-BOT_TOKEN = os.getenv("BOT_TOKEN")
+BOT_TOKEN = os.getenv("TELEGRAM_TOKEN")
 GAME_URL = os.getenv("GAME_URL")
 
-async def start(update: Update, context: CallbackContext):
-    keyboard = [[InlineKeyboardButton("🚀 Играть", web_app=WebAppInfo(url=GAME_URL))]]
-    reply_markup = InlineKeyboardMarkup(keyboard)
+# Настраиваем логирование
+logging.basicConfig(level=logging.INFO)
+
+# Создаем бота и диспетчер
+bot = Bot(token=BOT_TOKEN)
+dp = Dispatcher(bot)
+
+@dp.message_handler(commands=['start'])
+async def start_command(message: types.Message):
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    webapp_button = types.KeyboardButton("🚀 Играть", web_app=WebAppInfo(url=GAME_URL))
+    keyboard.add(webapp_button)
     
-    await update.message.reply_text("Нажми кнопку, чтобы запустить игру!", reply_markup=reply_markup)
+    await message.answer("Привет! Нажми на кнопку ниже, чтобы сыграть в игру 🚀", reply_markup=keyboard)
 
-# 🔹 Создаем бота и добавляем команду /start
-app = Application.builder().token(BOT_TOKEN).build()
-app.add_handler(CommandHandler("start", start))
-
-# 🔹 Запускаем бота
-print("✅ Бот запущен. Нажми /start в Telegram!")
-app.run_polling()
+if __name__ == "__main__":
+    executor.start_polling(dp, skip_updates=True)

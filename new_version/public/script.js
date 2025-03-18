@@ -32,8 +32,21 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("choose-option-btn").addEventListener("click", () => {
         dialogText.textContent = "Ты сделал выбор.";
     });
-
-    document.getElementById("explore-btn").addEventListener("click", () => {
-        dialogText.textContent = "Ты осматриваешься вокруг.";
+    
+    document.getElementById("back-btn").addEventListener("click", function() {
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.openLink("https://clicker-geminy1.vercel.app/");
+        } else {
+            window.location.href = "https://clicker-geminy1.vercel.app/";
+        }
     });
+    
+    document.getElementById("explore-btn").addEventListener("click", function() {
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.openLink("https://clicker-geminy1.vercel.app/rocket-game.html");
+        } else {
+            window.location.href = "https://clicker-geminy1.vercel.app/rocket-game.html";
+        }
+    });
+
 });
