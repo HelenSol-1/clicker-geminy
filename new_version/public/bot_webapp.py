@@ -1,8 +1,9 @@
 import os
 import logging
+import asyncio
 from aiogram import Bot, Dispatcher, types
+from aiogram.client.default import DefaultBotProperties
 from aiogram.types import WebAppInfo
-from aiogram.utils import executor
 from dotenv import load_dotenv
 
 # Загружаем переменные из .env
@@ -13,17 +14,20 @@ GAME_URL = os.getenv("GAME_URL")
 # Настраиваем логирование
 logging.basicConfig(level=logging.INFO)
 
-# Создаем бота и диспетчер
-bot = Bot(token=BOT_TOKEN)
-dp = Dispatcher(bot)
+# Создаем бота с правильной конфигурацией
+bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode="HTML"))
+dp = Dispatcher() # Исправлено: Dispatcher создается без бота
 
-@dp.message_handler(commands=['start'])
+@dp.message(commands=['start']) # Исправлено: message_handler заменен на message
 async def start_command(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    webapp_button = types.KeyboardButton("🚀 Играть", web_app=WebAppInfo(url=GAME_URL))
+    webapp_button = types.KeyboardButton(" Играть", web_app=WebAppInfo(url=GAME_URL))
     keyboard.add(webapp_button)
     
-    await message.answer("Привет! Нажми на кнопку ниже, чтобы сыграть в игру 🚀", reply_markup=keyboard)
+    await message.answer("Привет! Нажми на кнопку ниже, чтобы сыграть в игру ", reply_markup=keyboard)
+
+async def main():
+    await dp.start_polling(bot, skip_updates=True) # Бот передается при запуске
 
 if __name__ == "__main__":
-    executor.start_polling(dp, skip_updates=True)
+    asyncio.run(main())
