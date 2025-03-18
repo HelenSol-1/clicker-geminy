@@ -40,7 +40,13 @@ document.addEventListener("DOMContentLoaded", () => {
             window.location.href = "https://clicker-geminy1.vercel.app/";
         }
     });
-    
+    document.getElementById("play-rocket").addEventListener("click", function() {
+        if (window.Telegram.WebApp) {
+            window.Telegram.WebApp.openLink("https://clicker-geminy1.vercel.app/rocket-game.html");
+        } else {
+            window.open("https://clicker-geminy1.vercel.app/rocket-game.html", "_blank");
+        }
+    });
     document.getElementById("explore-btn").addEventListener("click", function() {
         if (window.Telegram && window.Telegram.WebApp) {
             window.Telegram.WebApp.openLink("https://clicker-geminy1.vercel.app/rocket-game.html");
