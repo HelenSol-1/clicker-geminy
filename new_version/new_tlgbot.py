@@ -1,29 +1,44 @@
 import os
+import logging
+from aiogram import Bot, Dispatcher, types
+from aiogram.client.default import DefaultBotProperties
+from aiogram.types import WebAppInfo
 from dotenv import load_dotenv
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, WebAppInfo
-from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
-# Загружаем токен из .env
+logging.basicConfig(level=logging.DEBUG)  # Устанавливаем DEBUG-уровень логов
+logger = logging.getLogger(__name__)
+
 load_dotenv()
-TOKEN = os.getenv('TELEGRAM_TOKEN')
-WEBAPP_URL = os.getenv('WEBAPP_URL')
+BOT_TOKEN = os.getenv("TELEGRAM_TOKEN")
+GAME_URL = os.getenv("GAME_URL")
 
-async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("Привет! Введи команду /game, чтобы начать игру!")
+if not BOT_TOKEN:
+    logger.error("❌ Ошибка: TELEGRAM_TOKEN не найден!")
+    exit(1)
 
-async def start_game(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if not WEBAPP_URL:
-        await update.message.reply_text("Ошибка: WebApp URL не найден.")
-        return
+if not GAME_URL:
+    logger.warning("⚠️ Внимание: Переменная GAME_URL не задана.")
 
-    keyboard = [[InlineKeyboardButton("Начать игру", web_app=WebAppInfo(url=WEBAPP_URL))]]
-    reply_markup = InlineKeyboardMarkup(keyboard)
+bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode="HTML"))
+dp = Dispatcher()
 
-    await update.message.reply_text('Нажмите кнопку ниже, чтобы начать игру:', reply_markup=reply_markup)
+@dp.message(commands=['start'])
+async def start_command(message: types.Message):
+    logger.info(f"📩 Получена команда /start от {message.from_user.id}")
 
-app = ApplicationBuilder().token(TOKEN).build()
-app.add_handler(CommandHandler('start', start))
-app.add_handler(CommandHandler('game', start_game))
+    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
+    webapp_button = types.KeyboardButton("🚀 Играть", web_app=WebAppInfo(url=GAME_URL))
+    keyboard.add(webapp_button)
 
-print(f"Бот запущен! WebApp: {WEBAPP_URL}")
-app.run_polling()
+    await message.answer("Привет! Нажми на кнопку ниже, чтобы сыграть в игру 🚀", reply_markup=keyboard)
+
+async def main():
+    logger.info("✅ Бот запущен и ожидает команды...")
+    await dp.start_polling(bot, skip_updates=True)
+
+if __name__ == "__main__":
+    try:
+        import asyncio
+        asyncio.run(main())
+    except Exception as e:
+        logger.error(f"❌ Ошибка запуска бота: {e}")
