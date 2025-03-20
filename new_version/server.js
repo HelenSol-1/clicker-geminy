@@ -14,47 +14,40 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
-// Проверяем переменные окружения
-if (!process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-  console.error("Ошибка: GOOGLE_APPLICATION_CREDENTIALS не задан в .env");
-  process.exit(1);
-}
-if (!process.env.GEMINI_API_KEY) {
-  console.error("Ошибка: GEMINI_API_KEY не задан в .env");
-  process.exit(1);
-}
-
-console.log("GOOGLE_APPLICATION_CREDENTIALS:", process.env.GOOGLE_APPLICATION_CREDENTIALS);
-console.log("GEMINI_API_KEY:", process.env.GEMINI_API_KEY);
+// Проверка переменных окружения
+console.log("GOOGLE_APPLICATION_CREDENTIALS:", process.env.GOOGLE_APPLICATION_CREDENTIALS || "Не задан");
+console.log("GEMINI_API_KEY:", process.env.GEMINI_API_KEY ? "Загружен" : "❌ Не найден");
 console.log("Порт:", port);
 
+// Обработчик генерации изображения
 app.post("/generate-image", async (req, res) => {
   const { prompt } = req.body;
   console.log("Получен запрос на генерацию с prompt:", prompt);
 
   try {
-    // Инициализируем GoogleAuth с JSON-ключом
+    // Инициализируем GoogleAuth с использованием JSON-ключа
     console.log("Инициализация GoogleAuth...");
     const auth = new GoogleAuth({
       keyFile: process.env.GOOGLE_APPLICATION_CREDENTIALS,
       scopes: ["https://www.googleapis.com/auth/generativelanguage"],
     });
     const client = await auth.getClient();
-    let token = await client.getAccessToken();
-    if (typeof token !== "string") {
-      token = token.token;
-    }
-    console.log("Получен access token:", token ? "Token получен" : "Token не получен");
+    let tokenObj = await client.getAccessToken();
+    let token = typeof tokenObj === "string" ? tokenObj : tokenObj.token;
+    console.log("Access token получен:", token ? "Получен" : "Не получен");
 
     // Формируем URL запроса для модели gemini-pro
     const url = "https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent";
     console.log("Формирование запроса к URL:", url);
 
-    // Формируем тело запроса
+    // Тело запроса
     const requestBody = {
-      contents: [{ parts: [{ text: prompt }] }]
+      contents: [
+        { parts: [{ text: prompt }] }
+      ]
     };
-    console.log("Отправка POST-запроса к Gemini API...");
+
+    console.log("Отправка запроса к Gemini API...");
     const response = await axios.post(url, requestBody, {
       headers: {
         "Content-Type": "application/json",
@@ -62,8 +55,9 @@ app.post("/generate-image", async (req, res) => {
       }
     });
 
-    console.log("Ответ от Gemini API получен:", response.data);
+    console.log("Ответ от Gemini API:", response.data);
 
+    // Извлекаем URL изображения, если есть
     let imageUrl = null;
     if (response.data.response_media && response.data.response_media.length > 0) {
       const image = response.data.response_media.find(media => media.media_type === "image");
@@ -78,7 +72,7 @@ app.post("/generate-image", async (req, res) => {
     });
 
   } catch (error) {
-    console.error("Ошибка Gemini API на этапе:", error.response ? JSON.stringify(error.response.data, null, 2) : error.message);
+    console.error("Ошибка Gemini API:", error.response ? JSON.stringify(error.response.data, null, 2) : error.message);
     res.status(500).json({ error: "Ошибка генерации изображения" });
   }
 });

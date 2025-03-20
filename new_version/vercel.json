@@ -1,0 +1,6 @@
+{
+    "routes": [
+      { "src": "/generate-image", "dest": "/api/server.js" }
+    ]
+  }
+  
