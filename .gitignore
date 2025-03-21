@@ -1,9 +1,1 @@
-.env
-__pycache__/
-node_modules/
-service-account.json
-*.log
-.DS_Store
-.vscode/
-.idea/
-rocket-bot/
+.vercel

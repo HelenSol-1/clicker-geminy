@@ -1,7 +1,22 @@
 {
   "version": 2,
+<<<<<<< HEAD
   "public": true,
   "routes": [
+=======
+  "builds": [
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "rocket-game.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    { "src": "/", "dest": "/index.html" },
+>>>>>>> f4dff87 (икс: проверка деплоя rocket-game.html)
     { "src": "/rocket-game", "dest": "/rocket-game.html" }
   ]
 }

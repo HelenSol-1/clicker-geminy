@@ -39,29 +39,47 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    const chooseOptionBtn = document.getElementById("choose-option-btn");
-    if (chooseOptionBtn) {
-        chooseOptionBtn.addEventListener("click", () => {
-            dialogText.textContent = "Ты сделал выбор.";
-        });
-    }
+    // Обработчик кнопки для выбора
+    document.getElementById("choose-option-btn").addEventListener("click", () => {
+        dialogText.textContent = "Ты сделал выбор.";
+    });
+    
+    // Кнопка назад
+    document.getElementById("back-btn").addEventListener("click", function() {
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.openLink("https://clicker-geminy.vercel.app/");
+        } else {
+            window.location.href = "https://clicker-geminy.vercel.app/";
+        }
+    });
 
-    const backBtn = document.getElementById("back-btn");
-    if (backBtn) {
-        backBtn.addEventListener("click", () => {
-            const url = "https://clicker-pi-two.vercel.app/";
-            window.location.href = url;
-        });
-    }
-
-    // Кнопка "Играть в ракету" (фиксируем)
-    const playRocketBtn = document.getElementById("play-rocket");
-    if (playRocketBtn) {
-        playRocketBtn.addEventListener("click", () => {
-            const rocketUrl = "https://clicker-geminy.vercel.app/rocket-game.html";
-            console.log("Кнопка 'Играть в ракету' нажата!"); // Добавлено логирование
-            console.log("Открываю игру: " + rocketUrl);
-            window.open(rocketUrl, "_blank");
-        });
-    }
+    // Кнопка для игры в ракету
+    document.getElementById("play-rocket").addEventListener("click", function() {
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.openLink("https://clicker-geminy.vercel.app/rocket-game.html");
+        } else {
+            window.open("https://clicker-geminy.vercel.app/rocket-game.html", "_blank");
+        }
+    });
+    document.addEventListener("DOMContentLoaded", () => {
+        console.log("Страница загружена, ищем кнопку 'Играть в ракету'...");
+        const playRocketBtn = document.getElementById("play-rocket");
+        if (!playRocketBtn) {
+            console.error("Ошибка: кнопка 'Играть в ракету' не найдена!");
+        } else {
+            playRocketBtn.addEventListener("click", function() {
+                console.log("Кнопка 'Играть в ракету' нажата!");
+                window.open("https://clicker-geminy.vercel.app/rocket-game.html", "_blank");
+            });
+        }
+    });
+    
+    // Кнопка для исследования
+    document.getElementById("explore-btn").addEventListener("click", function() {
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.openLink("https://clicker-geminy.vercel.app/rocket-game.html");
+        } else {
+            window.location.href = "https://clicker-geminy.vercel.app/rocket-game.html";
+        }
+    });
 });
