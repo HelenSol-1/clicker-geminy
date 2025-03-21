@@ -26,7 +26,7 @@ if not ROCKET_URL:
 
 logger.info(f"✅ TELEGRAM_TOKEN загружен: {BOT_TOKEN[:10]}********")
 logger.info(f"✅ GAME_URL загружен: {GAME_URL}")
-logger.info(f"✅ ROCKET_GAME_URL загружен: {ROCKET_URL}")
+logger.info(f"✅ ROCKET_licker-geminy загружен: {ROCKET_URL}")
 
 # Создаём бота
 bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode="HTML"))

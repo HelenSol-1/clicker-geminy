@@ -1,6 +1,17 @@
 {
-    "routes": [
-      { "src": "/generate-image", "dest": "/api/server.js" }
-    ]
-  }
-  
+  "version": 2,
+  "builds": [
+    {
+      "src": "index.html",
+      "use": "@vercel/static"
+    },
+    {
+      "src": "rocket-game.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    { "src": "/", "dest": "/index.html" },
+    { "src": "/rocket-game", "dest": "/rocket-game.html" }
+  ]
+}
