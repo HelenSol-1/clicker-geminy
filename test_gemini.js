@@ -9,7 +9,8 @@ async function testGeminiAPI() {
             return;
         }
 
-        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-pro:generateContent?key=${apiKey}`;
+        // Новый URL с правильной моделью
+        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-pro-002:generateContent?key=${apiKey}`;
 
         const requestData = {
             contents: [

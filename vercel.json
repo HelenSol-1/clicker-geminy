@@ -1,17 +1,7 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    },
-    {
-      "src": "rocket-game.html",
-      "use": "@vercel/static"
-    }
-  ],
+  "public": true,
   "routes": [
-    { "src": "/", "dest": "/index.html" },
     { "src": "/rocket-game", "dest": "/rocket-game.html" }
   ]
 }
