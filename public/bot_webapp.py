@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 BOT_TOKEN = os.getenv("TELEGRAM_TOKEN")
 GAME_URL = os.getenv("GAME_URL")  # Основная игра
-ROCKET_URL = os.getenv("ROCKET_GAME_URL")  # Игра с ракетой
+ROCKET_URL = os.getenv("ROCKET_URL")  # Игра с ракетой
 
 if not BOT_TOKEN:
     logger.error("❌ Ошибка: TELEGRAM_TOKEN не найден!")
