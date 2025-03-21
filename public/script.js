@@ -59,6 +59,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (playRocketBtn) {
         playRocketBtn.addEventListener("click", () => {
             const rocketUrl = "https://clicker-geminy.vercel.app/rocket-game.html";
+            console.log("Кнопка 'Играть в ракету' нажата!"); // Добавлено логирование
             console.log("Открываю игру: " + rocketUrl);
             window.open(rocketUrl, "_blank");
         });
