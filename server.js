@@ -10,14 +10,16 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
+
 app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
 // Проверка переменных окружения
-console.log("GOOGLE_APPLICATION_CREDENTIALS:", process.env.GOOGLE_APPLICATION_CREDENTIALS || "Не задан");
-console.log("GEMINI_API_KEY:", process.env.GEMINI_API_KEY ? "Загружен" : "❌ Не найден");
-console.log("Порт:", port);
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "❌ Не найден";
+const GOOGLE_APPLICATION_CREDENTIALS = process.env.GOOGLE_APPLICATION_CREDENTIALS || "Не задан";
+const PORT = process.env.PORT || 5000;
+
 
 // Обработчик генерации изображения
 app.post("/generate-image", async (req, res) => {
