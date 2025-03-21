@@ -2,7 +2,8 @@
   "builds": [
     { "src": "public/**", "use": "@vercel/static" }
   ],
-  "routes": [
-    { "src": "/(.*)", "dest": "/public/$1" }
+"routes": [
+  { "src": "/rocket-game.html", "dest": "/public/rocket-game.html" },
+  { "src": "/", "dest": "/public/index.html" }
   ]
 }
