@@ -1,1 +1,20 @@
 .vercel
+# Игнорируем конфиденциальные файлы
+.env
+service-account.json
+
+# Игнорируем зависимости и сборку
+node_modules/
+__pycache__/
+*.log
+*.cache
+.DS_Store
+.idea/
+.vscode/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+
+# Игнорируем файлы системы контроля версий
+.git/
