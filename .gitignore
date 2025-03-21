@@ -5,6 +5,7 @@ service-account.json
 
 # Игнорируем зависимости и сборку
 node_modules/
+venv/
 __pycache__/
 *.log
 *.cache
