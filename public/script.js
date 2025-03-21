@@ -39,6 +39,31 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    const chooseOptionBtn = document.getElementById("choose-option-btn");
+    if (chooseOptionBtn) {
+        chooseOptionBtn.addEventListener("click", () => {
+            dialogText.textContent = "Ты сделал выбор.";
+        });
+    }
+
+    const backBtn = document.getElementById("back-btn");
+    if (backBtn) {
+        backBtn.addEventListener("click", () => {
+            const url = "https://clicker-pi-two.vercel.app/";
+            window.location.href = url;
+        });
+    }
+
+    // Кнопка "Играть в ракету" (фиксируем)
+    const playRocketBtn = document.getElementById("play-rocket");
+    if (playRocketBtn) {
+        playRocketBtn.addEventListener("click", () => {
+            const rocketUrl = "https://clicker-geminy.vercel.app/rocket-game.html";
+            console.log("Кнопка 'Играть в ракету' нажата!"); // Добавлено логирование
+            console.log("Открываю игру: " + rocketUrl);
+            window.open(rocketUrl, "_blank");
+        });
+    }
     // Обработчик кнопки для выбора
     document.getElementById("choose-option-btn").addEventListener("click", () => {
         dialogText.textContent = "Ты сделал выбор.";
