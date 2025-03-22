@@ -98,7 +98,11 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
     });
-    
+    // Проверяем, запущено ли приложение внутри Telegram
+    if (window.Telegram.WebApp) {
+        const dialogText = document.getElementById("dialog-text");
+        dialogText.textContent = "Привет тебе!";
+    }
     // Кнопка для исследования
     document.getElementById("explore-btn").addEventListener("click", function() {
         if (window.Telegram && window.Telegram.WebApp) {
