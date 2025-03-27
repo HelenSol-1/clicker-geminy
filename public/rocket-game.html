@@ -5,6 +5,41 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ракета 🚀</title>
     <style>
+        
+        .rocket {
+        margin: 40px auto;
+        width: 100px;
+        height: 100px;
+        background: url('https://cdn-icons-png.flaticon.com/512/3297/3297590.png') no-repeat center;
+        background-size: contain;
+        animation: fly 3s linear infinite;
+        }
+
+        @keyframes fly {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-40px); }
+        100% { transform: translateY(0); }
+        }
+
+        .button-row {
+        margin-top: 30px;
+        }
+
+        .btn {
+        background-color: #00bfff;
+        border: none;
+        color: white;
+        padding: 12px 20px;
+        font-size: 16px;
+        margin: 10px;
+        border-radius: 8px;
+        cursor: pointer;
+        }
+
+        .btn:hover {
+        background-color: #009acd;
+        }
+
         body {
             margin: 0;
             overflow: hidden;
@@ -437,5 +472,18 @@
         // Initialize the game
         window.onload = init;
     </script>
+      <h1>Привет тебе из WebApp!</h1>
+      <p id="dialog">Хочешь сыграть в игру?</p>
+    
+      <div class="button-row">
+        <button id="yes-btn" class="btn">Да</button>
+        <button id="no-btn" class="btn">Нет</button>
+      </div>
+    
+      <div id="touch-controls">
+        <button id="btn-left">⬅️</button>
+        <button id="btn-right">➡️</button>
+      </div>
+      
 </body>
 </html>

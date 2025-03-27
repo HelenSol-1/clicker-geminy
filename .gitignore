@@ -2,6 +2,7 @@
 # Игнорируем конфиденциальные файлы
 .env
 service-account.json
+public/rocket-game - Copy.html
 
 # Игнорируем зависимости и сборку
 node_modules/

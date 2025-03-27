@@ -64,3 +64,22 @@ button {
 button:hover {
     background: #ff6347;
 }
+#touch-controls {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    z-index: 999;
+  }
+  
+  #touch-controls button {
+    font-size: 24px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 2px solid #000;
+    cursor: pointer;
+  }
+  
